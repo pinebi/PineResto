@@ -1,0 +1,107 @@
+============================================
+PineResto SQL Import Talimatları
+============================================
+
+SUNUCU BİLGİLERİ:
+Host: 185.210.92.248
+Port: 3306
+Kullanıcı: EDonusum
+Şifre: 150399AA-DB5B-47D9-BF31-69EB984CB5DF
+
+============================================
+SEÇENEK 1: phpMyAdmin ile Import (ÖNERİLEN)
+============================================
+
+1. phpMyAdmin'e giriş yapın:
+   http://185.210.92.248/phpmyadmin
+   
+2. Sol menüden "Yeni" (New) butonuna tıklayın
+
+3. Veritabanı adı: PineResto
+   Karakter seti: utf8mb4_unicode_ci
+   "Oluştur" (Create) butonuna tıklayın
+
+4. Sol menüden "PineResto" veritabanını seçin
+
+5. Üst menüden "İçe Aktar" (Import) sekmesine tıklayın
+
+6. "Dosya Seç" butonuna tıklayın
+
+7. Bu dosyayı seçin:
+   C:\ModernERP\Restoran\database\PineResto-full.sql
+
+8. Sayfanın en altına kaydırın ve "Git" (Go) butonuna tıklayın
+
+9. ✅ Import tamamlandı mesajını bekleyin
+
+============================================
+SEÇENEK 2: MySQL Workbench ile Import
+============================================
+
+1. MySQL Workbench'i açın
+
+2. Yeni bağlantı oluşturun:
+   Connection Name: PineResto Server
+   Hostname: 185.210.92.248
+   Port: 3306
+   Username: EDonusum
+   Password: 150399AA-DB5B-47D9-BF31-69EB984CB5DF
+
+3. Bağlantıyı test edin ve bağlanın
+
+4. Menüden: Server → Data Import
+
+5. "Import from Self-Contained File" seçin
+
+6. Dosya seçin:
+   C:\ModernERP\Restoran\database\PineResto-full.sql
+
+7. "New..." butonuna tıklayın, "PineResto" yazın
+
+8. "Start Import" butonuna tıklayın
+
+============================================
+SEÇENEK 3: Command Line (MySQL Client Gerekli)
+============================================
+
+mysql -h 185.210.92.248 -u EDonusum -p PineResto < database\PineResto-full.sql
+
+Şifre sorduğunda: 150399AA-DB5B-47D9-BF31-69EB984CB5DF
+
+============================================
+SONRASI
+============================================
+
+Import tamamlandıktan sonra:
+
+1. Projeyi başlatın:
+   npm run dev
+
+2. Tarayıcıda açın:
+   http://localhost:3100
+
+3. Giriş yapın:
+   Kullanıcı: admin
+   Şifre: 12345
+
+============================================
+SORUN GİDERME
+============================================
+
+❌ "Access Denied"
+   → Kullanıcı adı ve şifre kontrol edin
+
+❌ "Connection Timeout"
+   → Sunucu firewall ayarlarını kontrol edin
+   → Port 3306 açık mı kontrol edin
+
+❌ "Database exists"
+   → Önce DROP DATABASE PineResto; çalıştırın
+
+============================================
+
+
+
+
+
+
