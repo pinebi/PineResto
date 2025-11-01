@@ -421,3 +421,8 @@ CREATE INDEX idx_inventory_low_stock ON inventory_items(current_stock, min_stock
 
 
 
+
+
+
+
+

@@ -101,7 +101,7 @@ export default function CheckoutPage() {
                   <div>
                     <h3 className="font-semibold text-gray-900">{item.product.name}</h3>
                     <p className="text-sm text-gray-600">
-                      {item.quantity} x ₺{item.product.price.toFixed(2)}
+                      {item.quantity} x €{item.product.price.toFixed(2)}
                     </p>
                     {item.selectedOptions && Object.keys(item.selectedOptions).length > 0 && (
                       <div className="text-xs text-blue-700 mt-1">
@@ -118,7 +118,7 @@ export default function CheckoutPage() {
                   </div>
                 </div>
                 <span className="font-bold text-primary-600">
-                  ₺{(item.product.price * item.quantity).toFixed(2)}
+                  €{(item.product.price * item.quantity).toFixed(2)}
                 </span>
               </div>
             ))}
@@ -130,7 +130,7 @@ export default function CheckoutPage() {
           <div className="flex justify-between items-center mb-6">
             <span className="text-2xl font-bold text-gray-900">Toplam Tutar:</span>
             <span className="text-4xl font-bold text-primary-600">
-              ₺{total.toFixed(2)}
+              €{total.toFixed(2)}
             </span>
           </div>
         </div>

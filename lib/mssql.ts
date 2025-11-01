@@ -23,16 +23,41 @@ const config: sql.config = {
 let pool: sql.ConnectionPool | null = null;
 
 export async function getPool(): Promise<sql.ConnectionPool> {
-  if (!pool || !pool.connected) {
-    if (pool) {
+  // Eğer pool yoksa veya bağlantı kapalıysa yeni bağlantı oluştur
+  if (!pool) {
+    try {
+      pool = await sql.connect(config);
+      console.log('✅ MSSQL bağlantısı başarılı - PineResto');
+    } catch (error) {
+      console.error('❌ MSSQL bağlantı hatası:', error);
+      pool = null;
+      throw error;
+    }
+  } else {
+    // Pool varsa bağlantı durumunu kontrol et
+    try {
+      // Bağlantının aktif olup olmadığını test et
+      const testRequest = pool.request();
+      await testRequest.query('SELECT 1');
+    } catch (error) {
+      // Bağlantı kapalıysa yeniden bağlan
+      console.log('⚠️  MSSQL bağlantısı kapalı, yeniden bağlanılıyor...');
       try {
-        await pool.close();
-      } catch (error) {
-        // Ignore close errors
+        if (pool) {
+          try {
+            await pool.close();
+          } catch (closeError) {
+            // Ignore close errors
+          }
+        }
+        pool = await sql.connect(config);
+        console.log('✅ MSSQL bağlantısı yeniden başarılı - PineResto');
+      } catch (reconnectError) {
+        console.error('❌ MSSQL yeniden bağlantı hatası:', reconnectError);
+        pool = null;
+        throw reconnectError;
       }
     }
-    pool = await sql.connect(config);
-    console.log('✅ MSSQL bağlantısı başarılı - PineResto');
   }
   return pool;
 }

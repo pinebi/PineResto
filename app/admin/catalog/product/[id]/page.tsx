@@ -378,7 +378,7 @@ export default function ProductDetailPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Alış Fiyatı (₺)
+                          Alış Fiyatı (€)
                         </label>
                         <input
                           type="number"
@@ -391,7 +391,7 @@ export default function ProductDetailPage() {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Satış Fiyatı (₺)
+                          Satış Fiyatı (€)
                         </label>
                         <input
                           type="number"

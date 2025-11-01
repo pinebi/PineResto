@@ -28,7 +28,7 @@ export default function TableCheckoutPage() {
 
     // Sipariş simülasyonu
     setTimeout(() => {
-      alert(`✅ Siparişiniz alındı!\n\nMasa: ${tableId}\nAd: ${customerName}\nToplam: ₺${total.toFixed(2)}\n\nGarson en kısa sürede gelecek!`);
+      alert(`✅ Siparişiniz alındı!\n\nMasa: ${tableId}\nAd: ${customerName}\nToplam: €${total.toFixed(2)}\n\nGarson en kısa sürede gelecek!`);
       clearCart();
       router.push(`/order/table/${tableId}/success`);
     }, 2000);
@@ -115,10 +115,10 @@ export default function TableCheckoutPage() {
                 </div>
                 <div className="text-right ml-4">
                   <div className="font-semibold text-gray-900">
-                    {item.quantity} × ₺{item.product.price}
+                    {item.quantity} × €{item.product.price}
                   </div>
                   <div className="text-sm font-bold text-orange-600">
-                    ₺{(item.product.price * item.quantity).toFixed(2)}
+                    €{(item.product.price * item.quantity).toFixed(2)}
                   </div>
                 </div>
               </div>
@@ -129,15 +129,15 @@ export default function TableCheckoutPage() {
           <div className="mt-6 pt-6 border-t space-y-2">
             <div className="flex justify-between text-gray-600">
               <span>Ara Toplam</span>
-              <span>₺{subtotal.toFixed(2)}</span>
+              <span>€{subtotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-gray-600">
               <span>KDV (%9)</span>
-              <span>₺{tax.toFixed(2)}</span>
+              <span>€{tax.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-2xl font-bold text-gray-900 pt-2 border-t">
               <span>Toplam</span>
-              <span className="text-orange-600">₺{total.toFixed(2)}</span>
+              <span className="text-orange-600">€{total.toFixed(2)}</span>
             </div>
           </div>
         </div>

@@ -237,7 +237,7 @@ function DeliveryContent() {
                 </div>
                 <div className="flex justify-between text-sm font-bold text-gray-900 mt-2 pt-2 border-t">
                   <span>Toplam:</span>
-                  <span>₺{delivery.totalAmount}</span>
+                  <span>€{delivery.totalAmount}</span>
                 </div>
               </div>
 

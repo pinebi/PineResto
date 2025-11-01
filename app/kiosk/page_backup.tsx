@@ -357,7 +357,7 @@ export default function KioskPage() {
                         </h3>
                         <div className="flex items-center justify-between">
                           <span className="text-2xl font-bold text-primary-600">
-                            ₺{product.price.toFixed(2)}
+                            €{product.price.toFixed(2)}
                           </span>
                         </div>
                       </div>
@@ -492,7 +492,7 @@ export default function KioskPage() {
                   </p>
                   <div className="flex justify-between items-center">
                     <span className="text-2xl font-bold text-primary-600">
-                      ₺{product.price.toFixed(2)}
+                      €{product.price.toFixed(2)}
                     </span>
                       <span className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
                       Ekle
@@ -551,7 +551,7 @@ export default function KioskPage() {
               </p>
               
               <div className="text-2xl font-bold text-primary-600 mb-3">
-                ₺{selectedProduct.price.toFixed(2)}
+                €{selectedProduct.price.toFixed(2)}
               </div>
 
               {/* Product Options */}
@@ -640,7 +640,7 @@ export default function KioskPage() {
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm font-semibold text-gray-700">Toplam:</span>
                   <span className="text-xl font-bold text-primary-600">
-                    ₺{(selectedProduct.price * quantity).toFixed(2)}
+                    €{(selectedProduct.price * quantity).toFixed(2)}
                   </span>
                 </div>
                 

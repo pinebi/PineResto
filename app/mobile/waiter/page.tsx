@@ -21,21 +21,27 @@ export default function WaiterPage() {
   const [filter, setFilter] = useState<'all' | 'empty' | 'occupied' | 'reserved'>('all');
 
   useEffect(() => {
-    // localStorage'dan masaları yükle
-    const savedTables = localStorage.getItem('restaurantTables');
-    if (savedTables) {
-      const parsedTables = JSON.parse(savedTables);
-      // Masa durumları için demo verileri ekle
-      const tablesWithStatus = parsedTables.map((table: any) => ({
+    fetchTables();
+  }, []);
+
+  const fetchTables = async () => {
+    try {
+      const response = await fetch('/api/tables');
+      const data = await response.json();
+      
+      // Demo verileri ekle (sipariş, garson, tutar bilgileri)
+      const tablesWithDemoData = data.map((table: any) => ({
         ...table,
-        status: table.status || (Math.random() > 0.5 ? 'occupied' : 'empty'),
+        status: table.status || 'empty',
         currentOrder: table.status === 'occupied' ? `ORD-${Math.floor(Math.random() * 100)}` : undefined,
         waiter: table.status === 'occupied' ? ['Ahmet', 'Ayşe', 'Mehmet', 'Fatma', 'Ali'][Math.floor(Math.random() * 5)] : undefined,
         amount: table.status === 'occupied' ? Math.floor(Math.random() * 500) + 100 : undefined,
       }));
-      setTables(tablesWithStatus);
-    } else {
-      // Demo masa verileri
+      
+      setTables(tablesWithDemoData);
+    } catch (error) {
+      console.error('Masalar yüklenirken hata:', error);
+      // Hata durumunda demo verileri göster
       const demoTables: Table[] = [
         { id: '1', number: 1, capacity: 2, status: 'empty' },
         { id: '2', number: 2, capacity: 4, status: 'occupied', currentOrder: 'ORD-001', waiter: 'Ahmet', amount: 250 },
@@ -48,7 +54,7 @@ export default function WaiterPage() {
       ];
       setTables(demoTables);
     }
-  }, []);
+  };
 
   const filteredTables = tables.filter(table => 
     filter === 'all' ? true : table.status === filter
@@ -72,6 +78,28 @@ export default function WaiterPage() {
     }
   };
 
+  const updateTableStatus = async (tableId: string, newStatus: 'empty' | 'occupied' | 'reserved') => {
+    try {
+      const response = await fetch('/api/tables', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: tableId,
+          status: newStatus
+        }),
+      });
+
+      if (response.ok) {
+        // Başarılı güncelleme sonrası masaları yeniden yükle
+        fetchTables();
+      }
+    } catch (error) {
+      console.error('Masa durumu güncellenirken hata:', error);
+    }
+  };
+
   return (
     <ProtectedRoute allowedRoles={['admin', 'manager', 'waiter']}>
     <div className="min-h-screen bg-gray-50 pb-20">
@@ -91,17 +119,17 @@ export default function WaiterPage() {
       </header>
 
       {/* Stats */}
-      <div className="max-w-md mx-auto px-4 py-4">
-        <div className="grid grid-cols-3 gap-3">
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+      <div className="max-w-md mx-auto px-3 py-3">
+        <div className="grid grid-cols-3 gap-2">
+          <div className="bg-white rounded-lg p-2 shadow-sm">
             <div className="text-lg font-bold text-green-600">{tables.filter(t => t.status === 'empty').length}</div>
-            <div className="text-xs text-gray-600">Boş Masa</div>
+            <div className="text-xs text-gray-600">Boş</div>
           </div>
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-white rounded-lg p-2 shadow-sm">
             <div className="text-lg font-bold text-red-600">{tables.filter(t => t.status === 'occupied').length}</div>
-            <div className="text-xs text-gray-600">Dolu Masa</div>
+            <div className="text-xs text-gray-600">Dolu</div>
           </div>
-          <div className="bg-white rounded-lg p-3 shadow-sm">
+          <div className="bg-white rounded-lg p-2 shadow-sm">
             <div className="text-lg font-bold text-yellow-600">{tables.filter(t => t.status === 'reserved').length}</div>
             <div className="text-xs text-gray-600">Rezerve</div>
           </div>
@@ -109,11 +137,11 @@ export default function WaiterPage() {
       </div>
 
       {/* Filter */}
-      <div className="max-w-md mx-auto px-4 py-2">
-        <div className="flex space-x-2 overflow-x-auto">
+      <div className="max-w-md mx-auto px-3 py-2">
+        <div className="flex space-x-1 overflow-x-auto">
           <button
             onClick={() => setFilter('all')}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
+            className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
               filter === 'all' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700'
             }`}
           >
@@ -121,7 +149,7 @@ export default function WaiterPage() {
           </button>
           <button
             onClick={() => setFilter('empty')}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
+            className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
               filter === 'empty' ? 'bg-green-600 text-white' : 'bg-white text-gray-700'
             }`}
           >
@@ -129,7 +157,7 @@ export default function WaiterPage() {
           </button>
           <button
             onClick={() => setFilter('occupied')}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
+            className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
               filter === 'occupied' ? 'bg-red-600 text-white' : 'bg-white text-gray-700'
             }`}
           >
@@ -137,7 +165,7 @@ export default function WaiterPage() {
           </button>
           <button
             onClick={() => setFilter('reserved')}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
+            className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
               filter === 'reserved' ? 'bg-yellow-600 text-white' : 'bg-white text-gray-700'
             }`}
           >
@@ -150,17 +178,16 @@ export default function WaiterPage() {
       <div className="max-w-md mx-auto px-4 py-4">
         <div className="grid grid-cols-2 gap-4">
           {filteredTables.map((table) => (
-            <Link
+            <div
               key={table.id}
-              href={`/mobile/waiter/table/${table.id}`}
               className={`bg-white rounded-xl shadow-md p-4 border-2 ${getStatusColor(table.status)} hover:shadow-lg transition-shadow`}
             >
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">Masa {table.number}</div>
+                  <div className="text-xl font-bold text-gray-900">Masa {table.number}</div>
                   <div className="text-sm text-gray-600">{table.capacity} Kişilik</div>
                 </div>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(table.status)}`}>
+                <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(table.status)}`}>
                   {getStatusText(table.status)}
                 </span>
               </div>
@@ -169,11 +196,11 @@ export default function WaiterPage() {
                 <div className="space-y-2 pt-3 border-t">
                   <div className="flex items-center text-sm text-gray-600">
                     <FiUser className="w-4 h-4 mr-2" />
-                    <span>{table.waiter}</span>
+                    <span className="truncate">{table.waiter}</span>
                   </div>
                   <div className="flex items-center text-sm text-gray-600">
                     <FiDollarSign className="w-4 h-4 mr-2" />
-                    <span className="font-semibold text-green-600">₺{table.amount}</span>
+                    <span className="font-semibold text-green-600">€{table.amount}</span>
                   </div>
                   <div className="flex items-center text-sm text-gray-600">
                     <FiClock className="w-4 h-4 mr-2" />
@@ -186,11 +213,47 @@ export default function WaiterPage() {
                 <div className="pt-3 border-t">
                   <div className="flex items-center text-sm text-gray-600">
                     <FiUser className="w-4 h-4 mr-2" />
-                    <span>Garson: {table.waiter}</span>
+                    <span className="truncate">Garson: {table.waiter}</span>
                   </div>
                 </div>
               )}
-            </Link>
+
+              {/* Durum Değiştirme Butonları */}
+              <div className="pt-3 border-t mt-3">
+                <div className="flex space-x-1">
+                  {table.status !== 'empty' && (
+                    <button
+                      onClick={() => updateTableStatus(table.id, 'empty')}
+                      className="flex-1 bg-green-500 text-white text-sm py-2 px-2 rounded hover:bg-green-600"
+                    >
+                      Boş Yap
+                    </button>
+                  )}
+                  {table.status !== 'occupied' && (
+                    <button
+                      onClick={() => updateTableStatus(table.id, 'occupied')}
+                      className="flex-1 bg-red-500 text-white text-sm py-2 px-2 rounded hover:bg-red-600"
+                    >
+                      Dolu Yap
+                    </button>
+                  )}
+                  {table.status !== 'reserved' && (
+                    <button
+                      onClick={() => updateTableStatus(table.id, 'reserved')}
+                      className="flex-1 bg-yellow-500 text-white text-sm py-2 px-2 rounded hover:bg-yellow-600"
+                    >
+                      Rezerve
+                    </button>
+                  )}
+                </div>
+                <Link
+                  href={`/mobile/waiter/table/${table.id}`}
+                  className="block w-full mt-2 bg-blue-500 text-white text-sm py-2 px-2 rounded text-center hover:bg-blue-600"
+                >
+                  Detaylar
+                </Link>
+              </div>
+            </div>
           ))}
         </div>
       </div>

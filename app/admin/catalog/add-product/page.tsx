@@ -226,7 +226,7 @@ export default function AddProductPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Alış Fiyatı (₺)
+                    Alış Fiyatı (€)
                   </label>
                   <input
                     type="number"
@@ -241,7 +241,7 @@ export default function AddProductPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Satış Fiyatı (₺) *
+                    Satış Fiyatı (€) *
                   </label>
                   <input
                     type="number"
@@ -258,7 +258,7 @@ export default function AddProductPage() {
                 {formData.price > 0 && formData.purchasePrice > 0 && (
                   <div className="bg-green-50 p-3 rounded-lg">
                     <p className="text-sm text-green-800">
-                      <strong>Kar Marjı:</strong> ₺{(formData.price - formData.purchasePrice).toFixed(2)} 
+                      <strong>Kar Marjı:</strong> €{(formData.price - formData.purchasePrice).toFixed(2)} 
                       ({((formData.price - formData.purchasePrice) / formData.price * 100).toFixed(1)}%)
                     </p>
                   </div>
@@ -497,6 +497,11 @@ export default function AddProductPage() {
     </div>
   );
 }
+
+
+
+
+
 
 
 

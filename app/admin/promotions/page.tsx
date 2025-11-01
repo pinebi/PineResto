@@ -187,7 +187,7 @@ export default function PromotionsPage() {
           <div className="flex items-center justify-between">
             <div>
               <div className="text-sm opacity-90">Tasarruf Sağlanan</div>
-              <div className="text-3xl font-bold mt-1">₺12,450</div>
+              <div className="text-3xl font-bold mt-1">€12,450</div>
             </div>
             <FiGift className="w-12 h-12 opacity-50" />
           </div>
@@ -261,7 +261,7 @@ export default function PromotionsPage() {
                 <div>
                   <div className="text-sm text-gray-600">Değer</div>
                   <div className="text-lg font-bold text-gray-900">
-                    {promo.type === 'discount' || promo.type === 'happy-hour' ? `%${promo.value}` : `₺${promo.value}`}
+                    {promo.type === 'discount' || promo.type === 'happy-hour' ? `%${promo.value}` : `€${promo.value}`}
                   </div>
                 </div>
                 {promo.code && (
@@ -306,7 +306,7 @@ export default function PromotionsPage() {
               {promo.minOrderAmount && (
                 <div className="bg-blue-50 rounded-lg p-3">
                   <div className="text-sm text-blue-800">
-                    <strong>Min. Sipariş:</strong> ₺{promo.minOrderAmount}
+                    <strong>Min. Sipariş:</strong> €{promo.minOrderAmount}
                   </div>
                 </div>
               )}
@@ -329,6 +329,11 @@ export default function PromotionsPage() {
     </div>
   );
 }
+
+
+
+
+
 
 
 

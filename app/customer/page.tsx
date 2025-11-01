@@ -116,7 +116,7 @@ export default function CustomerAppPage() {
                   <div className="text-3xl">{item.image}</div>
                   <div>
                     <div className="font-medium text-gray-900">{item.name}</div>
-                    <div className="text-sm text-gray-600">₺{item.price}</div>
+                    <div className="text-sm text-gray-600">€{item.price}</div>
                   </div>
                 </div>
                 <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
@@ -138,7 +138,7 @@ export default function CustomerAppPage() {
                     <FiClock className="w-4 h-4 text-gray-400" />
                     <div className="text-sm text-gray-600">{order.date}</div>
                   </div>
-                  <div className="text-sm font-semibold text-green-600">₺{order.total}</div>
+                  <div className="text-sm font-semibold text-green-600">€{order.total}</div>
                 </div>
                 <div className="text-sm text-gray-900 mb-2">{order.items}</div>
                 <button className="text-xs text-blue-600 hover:text-blue-800 font-medium">
@@ -176,6 +176,11 @@ export default function CustomerAppPage() {
     </div>
   );
 }
+
+
+
+
+
 
 
 

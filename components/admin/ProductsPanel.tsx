@@ -155,7 +155,7 @@ export default function ProductsPanel() {
               
               <div className="flex items-center justify-between">
                 <span className="text-2xl font-bold text-primary-600">
-                  ₺{product.price.toFixed(2)}
+                  €{product.price.toFixed(2)}
                 </span>
                 
                 <div className="flex space-x-2">
@@ -215,7 +215,7 @@ export default function ProductsPanel() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Fiyat (₺) *
+                  Fiyat (€) *
                 </label>
                 <input
                   type="number"

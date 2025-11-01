@@ -205,7 +205,7 @@ export default function ProductOptionsPage() {
                               <span className={`text-xs font-medium ${
                                 value.priceModifier > 0 ? 'text-green-600' : 'text-red-600'
                               }`}>
-                                {value.priceModifier > 0 ? '+' : ''}₺{value.priceModifier.toFixed(2)}
+                                {value.priceModifier > 0 ? '+' : ''}€{value.priceModifier.toFixed(2)}
                               </span>
                             )}
                           </div>

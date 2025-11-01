@@ -1,548 +1,477 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { FiPlus, FiEdit2, FiTrash2, FiUsers, FiGrid, FiList, FiX, FiSave } from 'react-icons/fi';
+import { useState, useEffect } from 'react';
+import { FiPlus, FiEdit, FiTrash2, FiMapPin, FiGrid } from 'react-icons/fi';
 
 interface Table {
   id: string;
   number: number;
   capacity: number;
+  shape: string;
+  position_x: number;
+  position_y: number;
   status: 'empty' | 'occupied' | 'reserved';
-  position: { x: number; y: number };
-  shape: 'square' | 'round';
-  currentOrder?: string;
-  waiter?: string;
-  reservationName?: string;
-  reservationTime?: string;
+  current_order_id?: string;
+  waiter_id?: string;
+  reservation_name?: string;
+  reservation_time?: string;
+  created_at: string;
+  updated_at: string;
 }
 
-interface NewTableForm {
-  number: number;
-  capacity: number;
-  shape: 'square' | 'round';
+interface Region {
+  id: string;
+  name: string;
 }
 
 export default function TablesPage() {
   const [tables, setTables] = useState<Table[]>([]);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [isAdding, setIsAdding] = useState(false);
-  const [editingTable, setEditingTable] = useState<Table | null>(null);
-  const [draggingTable, setDraggingTable] = useState<string | null>(null);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const planRef = useRef<HTMLDivElement>(null);
-  const [newTable, setNewTable] = useState<NewTableForm>({
-    number: 1,
+  const [regions, setRegions] = useState<Region[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [showAddTableModal, setShowAddTableModal] = useState(false);
+  const [showAddRegionModal, setShowAddRegionModal] = useState(false);
+  const [newTable, setNewTable] = useState({
+    number: 0, // 0 olarak başlat, API otomatik bulacak
     capacity: 4,
-    shape: 'round'
+    shape: 'round',
+    position_x: 0,
+    position_y: 0,
+    status: 'empty'
+  });
+  const [newRegion, setNewRegion] = useState({
+    name: '',
+    description: ''
   });
 
   useEffect(() => {
-    // localStorage'dan masaları yükle
-    const savedTables = localStorage.getItem('restaurantTables');
-    if (savedTables) {
-      setTables(JSON.parse(savedTables));
-    } else {
-      // Demo masa verileri
-      const demoTables: Table[] = [
-        { id: '1', number: 1, capacity: 2, status: 'empty', position: { x: 50, y: 50 }, shape: 'square' },
-        { id: '2', number: 2, capacity: 4, status: 'occupied', position: { x: 200, y: 50 }, shape: 'round', currentOrder: 'ORD-001', waiter: 'Ahmet' },
-        { id: '3', number: 3, capacity: 4, status: 'occupied', position: { x: 350, y: 50 }, shape: 'round', currentOrder: 'ORD-002', waiter: 'Ayşe' },
-        { id: '4', number: 4, capacity: 6, status: 'reserved', position: { x: 500, y: 50 }, shape: 'square', reservationName: 'Mehmet Yılmaz', reservationTime: '19:00' },
-        { id: '5', number: 5, capacity: 2, status: 'empty', position: { x: 50, y: 200 }, shape: 'square' },
-        { id: '6', number: 6, capacity: 4, status: 'occupied', position: { x: 200, y: 200 }, shape: 'round', currentOrder: 'ORD-003', waiter: 'Fatma' },
-        { id: '7', number: 7, capacity: 4, status: 'empty', position: { x: 350, y: 200 }, shape: 'round' },
-        { id: '8', number: 8, capacity: 8, status: 'occupied', position: { x: 500, y: 200 }, shape: 'square', currentOrder: 'ORD-004', waiter: 'Ali' },
-      ];
-      setTables(demoTables);
-    }
+    fetchTables();
+    fetchRegions();
   }, []);
+
+  const fetchTables = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/tables');
+      const data = await response.json();
+      setTables(data);
+    } catch (error) {
+      console.error('Masalar yüklenirken hata:', error);
+      setTables([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchRegions = async () => {
+    try {
+      const response = await fetch('/api/tables/regions');
+      const data = await response.json();
+      setRegions(data);
+    } catch (error) {
+      console.error('Bölgeler yüklenirken hata:', error);
+      setRegions([]);
+    }
+  };
+
+  const handleDeleteTable = async (id: string) => {
+    if (confirm('Bu masayı silmek istediğinizden emin misiniz?')) {
+      try {
+        await fetch(`/api/tables?id=${id}`, { method: 'DELETE' });
+        fetchTables();
+      } catch (error) {
+        console.error('Masa silinirken hata:', error);
+      }
+    }
+  };
+
+  const handleDeleteRegion = async (id: string) => {
+    if (confirm('Bu bölgeyi silmek istediğinizden emin misiniz?')) {
+      try {
+        await fetch(`/api/tables/regions?id=${id}`, { method: 'DELETE' });
+        fetchRegions();
+      } catch (error) {
+        console.error('Bölge silinirken hata:', error);
+      }
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'empty': return 'bg-green-500';
-      case 'occupied': return 'bg-red-500';
-      case 'reserved': return 'bg-yellow-500';
-      default: return 'bg-gray-500';
+      case 'empty':
+        return 'bg-green-100 text-green-800';
+      case 'occupied':
+        return 'bg-red-100 text-red-800';
+      case 'reserved':
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'empty': return 'Boş';
-      case 'occupied': return 'Dolu';
-      case 'reserved': return 'Rezerve';
-      default: return status;
+      case 'empty':
+        return 'Müsait';
+      case 'occupied':
+        return 'Dolu';
+      case 'reserved':
+        return 'Rezerve';
+      default:
+        return 'Bilinmiyor';
     }
   };
 
-  const handleMouseDown = (tableId: string, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    if (!planRef.current) return;
-    
-    const table = tables.find(t => t.id === tableId);
-    if (!table) return;
+  const handleAddTable = async () => {
+    try {
+      const response = await fetch('/api/tables', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newTable),
+      });
 
-    const rect = planRef.current.getBoundingClientRect();
-    
-    // Masa merkezine göre offset hesapla (64 = masa boyutunun yarısı)
-    setDragOffset({
-      x: e.clientX - rect.left - table.position.x - 64,
-      y: e.clientY - rect.top - table.position.y - 64
-    });
-    
-    setDraggingTable(tableId);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!draggingTable || !planRef.current) return;
-
-    const rect = planRef.current.getBoundingClientRect();
-    
-    // Masa merkezini cursor'a hizala (64 = masa boyutunun yarısı)
-    let x = e.clientX - rect.left - dragOffset.x - 64;
-    let y = e.clientY - rect.top - dragOffset.y - 64;
-    
-    // Sınırları kontrol et (0 ile alan genişliği - masa boyutu arasında)
-    x = Math.max(0, Math.min(x, rect.width - 128));
-    y = Math.max(0, Math.min(y, rect.height - 128));
-
-    setTables(tables.map(table =>
-      table.id === draggingTable
-        ? { ...table, position: { x, y } }
-        : table
-    ));
-    setHasUnsavedChanges(true);
-  };
-
-  const handleMouseUp = () => {
-    setDraggingTable(null);
-  };
-
-  // Touch events için destek
-  const handleTouchStart = (tableId: string, e: React.TouchEvent) => {
-    e.preventDefault();
-    
-    if (!planRef.current) return;
-    
-    const table = tables.find(t => t.id === tableId);
-    if (!table) return;
-
-    const rect = planRef.current.getBoundingClientRect();
-    const touch = e.touches[0];
-    
-    setDragOffset({
-      x: touch.clientX - rect.left - table.position.x - 64,
-      y: touch.clientY - rect.top - table.position.y - 64
-    });
-    
-    setDraggingTable(tableId);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!draggingTable || !planRef.current) return;
-
-    e.preventDefault();
-    const rect = planRef.current.getBoundingClientRect();
-    const touch = e.touches[0];
-    
-    let x = touch.clientX - rect.left - dragOffset.x - 64;
-    let y = touch.clientY - rect.top - dragOffset.y - 64;
-    
-    x = Math.max(0, Math.min(x, rect.width - 128));
-    y = Math.max(0, Math.min(y, rect.height - 128));
-
-    setTables(tables.map(table =>
-      table.id === draggingTable
-        ? { ...table, position: { x, y } }
-        : table
-    ));
-    setHasUnsavedChanges(true);
-  };
-
-  const handleTouchEnd = () => {
-    setDraggingTable(null);
-  };
-
-  const handleAddTable = () => {
-    if (newTable.number && newTable.capacity) {
-      const table: Table = {
-        id: Date.now().toString(),
-        number: newTable.number,
-        capacity: newTable.capacity,
-        shape: newTable.shape,
-        status: 'empty',
-        position: { x: 100, y: 100 }
-      };
-      setTables([...tables, table]);
-      setNewTable({ number: newTable.number + 1, capacity: 4, shape: 'round' });
-      setIsAdding(false);
-      setHasUnsavedChanges(true);
+      if (response.ok) {
+        setShowAddTableModal(false);
+        setNewTable({
+          number: 0,
+          capacity: 4,
+          shape: 'round',
+          position_x: 0,
+          position_y: 0,
+          status: 'empty'
+        });
+        fetchTables();
+      }
+    } catch (error) {
+      console.error('Masa eklenirken hata:', error);
     }
   };
 
-  const handleDeleteTable = (id: string) => {
-    if (confirm('Bu masayı silmek istediğinizden emin misiniz?')) {
-      setTables(tables.filter(t => t.id !== id));
-      setHasUnsavedChanges(true);
-    }
+  const openAddTableModal = () => {
+    // Bir sonraki masa numarasını hesapla
+    const maxNumber = Math.max(...tables.map(t => t.number), 0);
+    setNewTable(prev => ({ ...prev, number: maxNumber + 1 }));
+    setShowAddTableModal(true);
   };
 
-  const handleSaveLayout = () => {
-    localStorage.setItem('restaurantTables', JSON.stringify(tables));
-    setHasUnsavedChanges(false);
-    alert('✅ Masa düzeni kaydedildi! Garson ekranında güncel düzen görüntülenecek.');
+  const handleAddRegion = async () => {
+    try {
+      const response = await fetch('/api/tables/regions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newRegion),
+      });
+
+      if (response.ok) {
+        setShowAddRegionModal(false);
+        setNewRegion({ name: '', description: '' });
+        fetchRegions();
+      }
+    } catch (error) {
+      console.error('Bölge eklenirken hata:', error);
+    }
   };
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <div>
+        <div className="flex items-center space-x-3">
+          <FiMapPin className="w-6 h-6 text-blue-600" />
           <h2 className="text-2xl font-bold text-gray-900">Masa Yönetimi</h2>
-          <p className="text-gray-600 mt-1">Masaları yönetin ve durumlarını takip edin</p>
         </div>
-        <div className="flex gap-2">
-          <div className="flex bg-white rounded-lg shadow-sm border">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-l-lg ${viewMode === 'grid' ? 'bg-blue-100 text-blue-600' : 'text-gray-600'}`}
-            >
-              <FiGrid className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`p-2 rounded-r-lg ${viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'text-gray-600'}`}
-            >
-              <FiList className="w-5 h-5" />
-            </button>
-          </div>
-          <button
-            onClick={() => setIsAdding(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+        <div className="flex space-x-3">
+          <button 
+            onClick={() => setShowAddRegionModal(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
           >
             <FiPlus className="w-4 h-4" />
-            Yeni Masa Ekle
+            <span>Yeni Bölge Ekle</span>
+          </button>
+          <button 
+            onClick={openAddTableModal}
+            className="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+          >
+            <FiPlus className="w-4 h-4" />
+            <span>Yeni Masa Ekle</span>
           </button>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg shadow-sm p-6 border">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-sm text-gray-600">Toplam Masa</div>
-              <div className="text-3xl font-bold text-gray-900 mt-1">{tables.length}</div>
+      {/* Regions Section */}
+      <div className="bg-white rounded-lg shadow-sm border">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-2">
+              <FiMapPin className="w-5 h-5 text-gray-600" />
+              <h3 className="text-lg font-semibold text-gray-900">Masa Bölgeleri</h3>
             </div>
-            <div className="bg-gray-100 p-3 rounded-lg">
-              <FiGrid className="w-6 h-6 text-gray-600" />
-            </div>
+            <button 
+              onClick={() => setShowAddRegionModal(true)}
+              className="bg-gray-800 hover:bg-gray-900 text-white px-3 py-2 rounded-lg flex items-center space-x-2 text-sm"
+            >
+              <FiPlus className="w-4 h-4" />
+              <span>Yeni Bölge</span>
+            </button>
           </div>
         </div>
-
-        <div className="bg-white rounded-lg shadow-sm p-6 border">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-sm text-gray-600">Boş Masa</div>
-              <div className="text-3xl font-bold text-green-600 mt-1">
-                {tables.filter(t => t.status === 'empty').length}
-              </div>
-            </div>
-            <div className="bg-green-100 p-3 rounded-lg">
-              <FiUsers className="w-6 h-6 text-green-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm p-6 border">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-sm text-gray-600">Dolu Masa</div>
-              <div className="text-3xl font-bold text-red-600 mt-1">
-                {tables.filter(t => t.status === 'occupied').length}
-              </div>
-            </div>
-            <div className="bg-red-100 p-3 rounded-lg">
-              <FiUsers className="w-6 h-6 text-red-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm p-6 border">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-sm text-gray-600">Rezerve</div>
-              <div className="text-3xl font-bold text-yellow-600 mt-1">
-                {tables.filter(t => t.status === 'reserved').length}
-              </div>
-            </div>
-            <div className="bg-yellow-100 p-3 rounded-lg">
-              <FiUsers className="w-6 h-6 text-yellow-600" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Add Table Modal */}
-      {isAdding && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold text-gray-900">Yeni Masa Ekle</h3>
-              <button
-                onClick={() => setIsAdding(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <FiX className="w-6 h-6" />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Masa Numarası
-                </label>
-                <input
-                  type="number"
-                  value={newTable.number}
-                  onChange={(e) => setNewTable({ ...newTable, number: parseInt(e.target.value) || 1 })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  min="1"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Kapasite (Kişi)
-                </label>
-                <input
-                  type="number"
-                  value={newTable.capacity}
-                  onChange={(e) => setNewTable({ ...newTable, capacity: parseInt(e.target.value) || 2 })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  min="1"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Masa Şekli
-                </label>
-                <div className="grid grid-cols-2 gap-4">
-                  <button
-                    onClick={() => setNewTable({ ...newTable, shape: 'square' })}
-                    className={`p-4 border-2 rounded-lg transition-all ${
-                      newTable.shape === 'square'
-                        ? 'border-blue-600 bg-blue-50'
-                        : 'border-gray-300 hover:border-gray-400'
-                    }`}
-                  >
-                    <div className="w-16 h-16 bg-blue-600 rounded-lg mx-auto mb-2"></div>
-                    <div className="text-sm font-medium text-center">Kare</div>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  BÖLGE ADI
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  İŞLEMLER
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {regions.map((region) => (
+                <tr key={region.id}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {region.name}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <div className="flex space-x-2">
+                      <button className="text-blue-600 hover:text-blue-900">
+                        <FiEdit className="w-4 h-4" />
                   </button>
                   <button
-                    onClick={() => setNewTable({ ...newTable, shape: 'round' })}
-                    className={`p-4 border-2 rounded-lg transition-all ${
-                      newTable.shape === 'round'
-                        ? 'border-blue-600 bg-blue-50'
-                        : 'border-gray-300 hover:border-gray-400'
-                    }`}
-                  >
-                    <div className="w-16 h-16 bg-blue-600 rounded-full mx-auto mb-2"></div>
-                    <div className="text-sm font-medium text-center">Yuvarlak</div>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={handleAddTable}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-              >
-                <FiSave className="w-5 h-5" />
-                Masa Ekle
-              </button>
-              <button
-                onClick={() => setIsAdding(false)}
-                className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 rounded-lg font-medium transition-colors"
-              >
-                İptal
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tables View */}
-      {viewMode === 'grid' ? (
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold">Masa Planı</h3>
-            <div className="flex items-center gap-4">
-              {hasUnsavedChanges && (
-                <div className="flex items-center gap-3">
-                  <div className="text-sm text-orange-600 bg-orange-50 px-4 py-2 rounded-lg border border-orange-200 font-medium">
-                    ⚠️ Kaydedilmemiş değişiklikler var
-                  </div>
-                  <button
-                    onClick={handleSaveLayout}
-                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors shadow-lg flex items-center gap-2"
-                  >
-                    <FiSave className="w-4 h-4" />
-                    Düzeni Kaydet
-                  </button>
-                </div>
-              )}
-              <div className="text-sm text-gray-600 bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">
-                <span className="font-semibold text-blue-700">💡 İpucu:</span>
-                <span className="ml-2">Masaya tıklayıp tutarak istediğiniz yere sürükleyin</span>
-              </div>
-            </div>
-          </div>
-          <div 
-            ref={planRef}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-            className="relative bg-gray-50 rounded-lg p-8 min-h-[600px] border-2 border-dashed select-none touch-none"
-            style={{ cursor: draggingTable ? 'grabbing' : 'default' }}
-          >
-            {tables.map((table) => (
-              <div
-                key={table.id}
-                onMouseDown={(e) => handleMouseDown(table.id, e)}
-                onTouchStart={(e) => handleTouchStart(table.id, e)}
-                style={{
-                  position: 'absolute',
-                  left: `${table.position.x}px`,
-                  top: `${table.position.y}px`,
-                  cursor: 'grab',
-                  transition: draggingTable === table.id ? 'none' : 'transform 0.2s ease',
-                  transform: draggingTable === table.id ? 'scale(1.05)' : 'scale(1)',
-                  zIndex: draggingTable === table.id ? 50 : 1,
-                  pointerEvents: 'auto',
-                }}
-                className={`w-32 h-32 ${table.shape === 'round' ? 'rounded-full' : 'rounded-lg'} ${getStatusColor(table.status)} text-white flex flex-col items-center justify-center shadow-xl hover:shadow-2xl group`}
-              >
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteTable(table.id);
-                  }}
-                  onMouseDown={(e) => e.stopPropagation()}
-                  onTouchStart={(e) => e.stopPropagation()}
-                  className="absolute -top-2 -right-2 bg-red-600 hover:bg-red-700 text-white w-8 h-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10 shadow-lg"
-                  style={{ cursor: 'pointer' }}
+                        onClick={() => handleDeleteRegion(region.id)}
+                        className="text-red-600 hover:text-red-900"
                 >
                   <FiTrash2 className="w-4 h-4" />
                 </button>
-                <div className="text-2xl font-bold pointer-events-none">Masa {table.number}</div>
-                <div className="text-sm mt-1 pointer-events-none">{table.capacity} Kişi</div>
-                {table.waiter && <div className="text-xs mt-1 pointer-events-none">{table.waiter}</div>}
               </div>
-            ))}
-            
-            {tables.length === 0 && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-6xl mb-4">🪑</div>
-                  <h3 className="text-xl font-medium text-gray-600 mb-2">Henüz masa eklenmemiş</h3>
-                  <p className="text-gray-500 mb-4">Masa eklemek için yukarıdaki butonu kullanın</p>
-                  <button
-                    onClick={() => setIsAdding(true)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors"
-                  >
-                    İlk Masayı Ekle
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="mt-4 flex items-center gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-green-500 rounded"></div>
-              <span>Boş</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-red-500 rounded"></div>
-              <span>Dolu</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-yellow-500 rounded"></div>
-              <span>Rezerve</span>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Masa No</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kapasite</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Durum</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Garson</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sipariş No</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rezervasyon</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">İşlemler</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {tables.map((table) => (
-                <tr key={table.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className={`w-3 h-3 ${getStatusColor(table.status)} rounded-full mr-3`}></div>
-                      <span className="text-sm font-medium text-gray-900">Masa {table.number}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    <FiUsers className="w-4 h-4 inline mr-1" />
-                    {table.capacity} Kişi
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(table.status)} bg-opacity-10 text-gray-900`}>
-                      {getStatusText(table.status)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {table.waiter || '-'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {table.currentOrder || '-'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {table.reservationName ? (
-                      <div>
-                        <div>{table.reservationName}</div>
-                        <div className="text-xs text-gray-500">{table.reservationTime}</div>
-                      </div>
-                    ) : '-'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-blue-600 hover:text-blue-900 mr-3">
-                      <FiEdit2 className="w-4 h-4" />
-                    </button>
-                    <button 
-                      onClick={() => handleDeleteTable(table.id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      <FiTrash2 className="w-4 h-4" />
-                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+                </div>
+              </div>
+
+      {/* Tables Section */}
+      <div className="bg-white rounded-lg shadow-sm border">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-2">
+              <FiGrid className="w-5 h-5 text-gray-600" />
+              <h3 className="text-lg font-semibold text-gray-900">Masalar</h3>
+            </div>
+            <button 
+              onClick={openAddTableModal}
+              className="bg-gray-800 hover:bg-gray-900 text-white px-3 py-2 rounded-lg flex items-center space-x-2 text-sm"
+            >
+              <FiPlus className="w-4 h-4" />
+              <span>Yeni Masa</span>
+            </button>
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  MASA NO
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  KAPASİTE
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  ŞEKİL
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  DURUM
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  İŞLEMLER
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-4 text-center">
+                    <div className="flex justify-center">
+                      <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  </td>
+                </tr>
+              ) : tables.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                    Henüz masa eklenmemiş
+                  </td>
+                </tr>
+              ) : (
+                tables.map((table) => (
+                  <tr key={table.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      Masa {table.number}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {table.capacity} kişi
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {table.shape === 'round' ? 'Yuvarlak' : 'Kare'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(table.status)}`}>
+                        {getStatusText(table.status)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <div className="flex space-x-2">
+                        <button className="text-blue-600 hover:text-blue-900">
+                          <FiEdit className="w-4 h-4" />
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteTable(table.id)}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          <FiTrash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Add Region Modal */}
+      {showAddRegionModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <h3 className="text-lg font-semibold mb-4">Yeni Bölge Ekle</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Bölge Adı
+                </label>
+                <input
+                  type="text"
+                  value={newRegion.name}
+                  onChange={(e) => setNewRegion({ ...newRegion, name: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Bölge adını girin"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Açıklama
+                </label>
+                <textarea
+                  value={newRegion.description}
+                  onChange={(e) => setNewRegion({ ...newRegion, description: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Bölge açıklaması"
+                  rows={3}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-3 mt-6">
+              <button
+                onClick={() => setShowAddRegionModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                İptal
+              </button>
+              <button
+                onClick={handleAddRegion}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Ekle
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Table Modal */}
+      {showAddTableModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <h3 className="text-lg font-semibold mb-4">Yeni Masa Ekle</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Masa Numarası
+                </label>
+                <input
+                  type="number"
+                  value={newTable.number}
+                  readOnly
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600"
+                />
+                <p className="text-xs text-gray-500 mt-1">Masa numarası otomatik olarak atanır</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Kapasite
+                </label>
+                <input
+                  type="number"
+                  value={newTable.capacity}
+                  onChange={(e) => setNewTable({ ...newTable, capacity: parseInt(e.target.value) })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  min="1"
+                  max="20"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Şekil
+                </label>
+                <select
+                  value={newTable.shape}
+                  onChange={(e) => setNewTable({ ...newTable, shape: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="round">Yuvarlak</option>
+                  <option value="square">Kare</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Durum
+                </label>
+                <select
+                  value={newTable.status}
+                  onChange={(e) => setNewTable({ ...newTable, status: e.target.value as 'empty' | 'occupied' | 'reserved' })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="empty">Müsait</option>
+                  <option value="occupied">Dolu</option>
+                  <option value="reserved">Rezerve</option>
+                </select>
+              </div>
+            </div>
+            <div className="flex justify-end space-x-3 mt-6">
+              <button
+                onClick={() => setShowAddTableModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                İptal
+              </button>
+              <button
+                onClick={handleAddTable}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Ekle
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
   );
 }
-

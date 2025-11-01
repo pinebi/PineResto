@@ -135,7 +135,7 @@ export default function ReportsPage() {
           <div className="flex items-center justify-between">
             <div>
               <div className="text-sm opacity-90">Toplam Ciro</div>
-              <div className="text-3xl font-bold mt-1">₺{salesData.totalRevenue.toLocaleString()}</div>
+              <div className="text-3xl font-bold mt-1">€{salesData.totalRevenue.toLocaleString()}</div>
               <div className="text-xs mt-2 flex items-center">
                 <FiTrendingUp className="w-4 h-4 mr-1" />
                 +15.3% önceki döneme göre
@@ -167,7 +167,7 @@ export default function ReportsPage() {
           <div className="flex items-center justify-between">
             <div>
               <div className="text-sm opacity-90">Ortalama Sipariş</div>
-              <div className="text-3xl font-bold mt-1">₺{salesData.avgOrderValue}</div>
+              <div className="text-3xl font-bold mt-1">€{salesData.avgOrderValue}</div>
               <div className="text-xs mt-2 flex items-center">
                 <FiTrendingUp className="w-4 h-4 mr-1" />
                 +6.2% önceki döneme göre
@@ -214,7 +214,7 @@ export default function ReportsPage() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm font-semibold text-gray-900">₺{product.revenue.toLocaleString()}</div>
+                  <div className="text-sm font-semibold text-gray-900">€{product.revenue.toLocaleString()}</div>
                   <div className="text-xs text-gray-500">{((product.revenue / salesData.totalRevenue) * 100).toFixed(1)}%</div>
                 </div>
               </div>
@@ -230,7 +230,7 @@ export default function ReportsPage() {
               <div key={index}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="text-sm font-medium text-gray-900">{category.category}</div>
-                  <div className="text-sm text-gray-600">₺{category.revenue.toLocaleString()}</div>
+                  <div className="text-sm text-gray-600">€{category.revenue.toLocaleString()}</div>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
@@ -267,8 +267,8 @@ export default function ReportsPage() {
                 <tr key={index} className="hover:bg-gray-50">
                   <td className="px-4 py-3 text-sm font-medium text-gray-900">{data.hour}</td>
                   <td className="px-4 py-3 text-sm text-gray-900">{data.orders}</td>
-                  <td className="px-4 py-3 text-sm font-semibold text-green-600">₺{data.revenue.toLocaleString()}</td>
-                  <td className="px-4 py-3 text-sm text-gray-900">₺{(data.revenue / data.orders).toFixed(0)}</td>
+                  <td className="px-4 py-3 text-sm font-semibold text-green-600">€{data.revenue.toLocaleString()}</td>
+                  <td className="px-4 py-3 text-sm text-gray-900">€{(data.revenue / data.orders).toFixed(0)}</td>
                   <td className="px-4 py-3">
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div

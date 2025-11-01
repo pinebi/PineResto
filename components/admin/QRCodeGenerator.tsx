@@ -93,3 +93,8 @@ export default function QRCodeGenerator({ data, title, description, size = 200 }
 
 
 
+
+
+
+
+

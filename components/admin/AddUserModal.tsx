@@ -264,7 +264,7 @@ export default function AddUserModal({ onClose, onSave }: AddUserModalProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Maaş (₺)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Maaş (€)</label>
                   <input
                     type="number"
                     value={formData.salary}
@@ -341,6 +341,11 @@ export default function AddUserModal({ onClose, onSave }: AddUserModalProps) {
     </div>
   );
 }
+
+
+
+
+
 
 
 

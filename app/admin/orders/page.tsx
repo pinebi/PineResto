@@ -289,7 +289,7 @@ export default function OrdersPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
-                        ₺{order.final_amount.toFixed(2)}
+                        €{order.final_amount.toFixed(2)}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -393,7 +393,7 @@ export default function OrdersPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Toplam Tutar</label>
-                  <p className="text-sm font-bold text-gray-900">₺{selectedOrder.final_amount.toFixed(2)}</p>
+                  <p className="text-sm font-bold text-gray-900">€{selectedOrder.final_amount.toFixed(2)}</p>
                 </div>
               </div>
 
@@ -413,7 +413,7 @@ export default function OrdersPage() {
                       <div>
                         <p className="font-medium">{item.product_name}</p>
                         <p className="text-sm text-gray-600">
-                          {item.quantity} × ₺{item.unit_price.toFixed(2)} = ₺{item.total_price.toFixed(2)}
+                          {item.quantity} × €{item.unit_price.toFixed(2)} = €{item.total_price.toFixed(2)}
                         </p>
                         {item.notes && (
                           <p className="text-xs text-gray-500 italic">Not: {item.notes}</p>

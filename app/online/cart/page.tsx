@@ -288,7 +288,7 @@ export default function OnlineCartPage() {
                       
                       <div className="flex items-center space-x-4">
                         <span className="text-2xl font-bold text-primary-600">
-                          ₺{(item.product.price * item.quantity).toFixed(2)}
+                          €{(item.product.price * item.quantity).toFixed(2)}
                         </span>
                         
                         <button
@@ -320,7 +320,7 @@ export default function OnlineCartPage() {
               <div className="border-t pt-3 flex justify-between items-center">
                 <span className="text-xl font-bold text-gray-900">Toplam:</span>
                 <span className="text-3xl font-bold text-primary-600">
-                  ₺{total.toFixed(2)}
+                  €{total.toFixed(2)}
                 </span>
               </div>
             </div>

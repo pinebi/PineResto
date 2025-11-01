@@ -217,7 +217,7 @@ export default function OptionGroupEditPage({ groupId, onClose }: OptionGroupEdi
                         <span className={`text-sm font-medium ${
                           value.priceModifier > 0 ? 'text-green-600' : 'text-red-600'
                         }`}>
-                          {value.priceModifier > 0 ? '+' : ''}₺{value.priceModifier.toFixed(2)}
+                          {value.priceModifier > 0 ? '+' : ''}€{value.priceModifier.toFixed(2)}
                         </span>
                       )}
                     </div>
@@ -274,7 +274,7 @@ export default function OptionGroupEditPage({ groupId, onClose }: OptionGroupEdi
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fiyat Değişikliği (₺)
+                      Fiyat Değişikliği (€)
                     </label>
                     <input
                       type="number"

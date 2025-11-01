@@ -145,7 +145,7 @@ export default function CustomersPage() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Toplam Harcama:</span>
-                <span className="font-medium text-green-600">₺{customer.totalSpent.toFixed(2)}</span>
+                <span className="font-medium text-green-600">€{customer.totalSpent.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Sadakat Puanı:</span>
@@ -286,6 +286,11 @@ export default function CustomersPage() {
     </div>
   );
 }
+
+
+
+
+
 
 
 

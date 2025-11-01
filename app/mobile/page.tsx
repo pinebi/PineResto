@@ -88,7 +88,7 @@ export default function MobilePage() {
               <div className="text-sm text-gray-600 mt-1">Aktif Sipariş</div>
             </div>
             <div className="bg-green-50 rounded-lg p-4">
-              <div className="text-2xl font-bold text-green-600">₺12,450</div>
+              <div className="text-2xl font-bold text-green-600">€12,450</div>
               <div className="text-sm text-gray-600 mt-1">Günlük Ciro</div>
             </div>
             <div className="bg-orange-50 rounded-lg p-4">
@@ -129,6 +129,11 @@ export default function MobilePage() {
     </div>
   );
 }
+
+
+
+
+
 
 
 

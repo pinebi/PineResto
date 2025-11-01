@@ -348,7 +348,7 @@ export default function TablePOSPage() {
     const selectedItems = orderItems.filter(item => selectedItemsForPayment.includes(item.id));
     const total = getSelectedItemsTotal();
     
-    alert(`${paymentMethod} ile ${total.toFixed(2)}₺ parçalı ödeme alındı.\n\nSeçili ürünler:\n${selectedItems.map(item => `${item.name} - ${item.total.toFixed(2)}₺`).join('\n')}`);
+    alert(`${paymentMethod} ile ${total.toFixed(2)}€ parçalı ödeme alındı.\n\nSeçili ürünler:\n${selectedItems.map(item => `${item.name} - ${item.total.toFixed(2)}€`).join('\n')}`);
     
     // Seçili ürünleri siparişten çıkar
     setOrderItems(prev => prev.filter(item => !selectedItemsForPayment.includes(item.id)));
@@ -396,7 +396,7 @@ export default function TablePOSPage() {
       } else {
         // Yeni sipariş oluştur
         const orderData = {
-          tableNumber: `table-${tableId}`,
+          tableId: tableId,
           orderType: 'table',
           items: orderItems.map(item => ({
             product: {
@@ -413,6 +413,7 @@ export default function TablePOSPage() {
         };
 
         console.log('Sipariş gönderiliyor:', orderData);
+        console.log('tableId değeri:', tableId);
 
         const response = await fetch('/api/orders', {
           method: 'POST',
@@ -438,28 +439,28 @@ export default function TablePOSPage() {
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-50 flex flex-col overflow-hidden">
-      {/* 1 - Material Design Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-3 flex justify-between items-center shadow-lg flex-shrink-0">
+    <div className="fixed inset-0 bg-gradient-to-br from-slate-50 to-blue-50 flex flex-col overflow-hidden">
+      {/* 1 - Modern Header */}
+      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white px-4 py-4 flex justify-between items-center shadow-xl flex-shrink-0">
         <div className="flex items-center space-x-3">
-          <div className="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm font-bold backdrop-blur">
+          <div className="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm font-bold backdrop-blur-sm border border-white/30">
             MASA {tableId}
           </div>
         </div>
-            <div className="text-center">
-          <div className="text-xs opacity-80">ELEGANTKASA1</div>
-            </div>
-        <div className="text-right text-xs">
-          <div>{mounted ? formatTime(currentTime) : '--:--:--'}</div>
-          <div className="opacity-80">{mounted ? formatDate(currentTime) : ''}</div>
-          </div>
+        <div className="text-center">
+          <div className="text-sm opacity-90 font-medium">ELEGANTKASA1</div>
         </div>
+        <div className="text-right text-sm">
+          <div className="font-mono">{mounted ? formatTime(currentTime) : '--:--:--'}</div>
+          <div className="opacity-80 text-xs">{mounted ? formatDate(currentTime) : ''}</div>
+        </div>
+      </div>
 
       <div className="flex-1 flex overflow-hidden p-2 gap-2">
         {/* 3 - Sol Panel - Sipariş Listesi */}
-        <div className="w-1/3 bg-white rounded-2xl shadow-lg flex flex-col overflow-hidden">
+        <div className="w-1/3 bg-white rounded-2xl shadow-xl flex flex-col overflow-hidden border border-gray-100">
           {/* Başlık */}
-          <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-3 font-semibold text-sm flex items-center gap-2">
+          <div className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-4 py-3 font-semibold text-sm flex items-center gap-2">
             <span className="text-xl">📋</span>
             <span>SİPARİŞ LİSTESİ</span>
           </div>
@@ -474,21 +475,21 @@ export default function TablePOSPage() {
         </div>
             ) : (
               <div className="space-y-2">
-            {orderItems.map((item, index) => (
-              <div 
-                key={item.id} 
+                {orderItems.map((item, index) => (
+                  <div 
+                    key={item.id} 
                     onClick={() => setSelectedOrderItemId(item.id)}
                     className={`rounded-2xl cursor-pointer transition-all duration-200 ${
                       selectedOrderItemId === item.id 
-                        ? 'bg-orange-50 shadow-md ring-2 ring-orange-500' 
-                        : 'bg-gray-50 hover:bg-gray-100 shadow-sm'
+                        ? 'bg-emerald-50 shadow-md ring-2 ring-emerald-500 border border-emerald-200' 
+                        : 'bg-gray-50 hover:bg-gray-100 shadow-sm border border-gray-100'
                     }`}
                   >
                     {/* Ürün Başlığı */}
                     <div className="p-2 border-b border-gray-100">
                       <div className="flex items-start justify-between">
                         <div className="font-bold text-xs text-gray-800 flex-1 pr-2">{item.name}</div>
-                        <div className="text-sm font-bold text-orange-600">₺{item.total.toFixed(2)}</div>
+                        <div className="text-sm font-bold text-emerald-600">€{item.total.toFixed(2)}</div>
                       </div>
           </div>
                     
@@ -521,7 +522,7 @@ export default function TablePOSPage() {
                         {/* Orta: Kompakt Fiyat Bilgileri */}
                         <div className="flex items-center gap-2 text-xs">
                           <span className="text-gray-500">KDV:10%</span>
-                          <span className="text-gray-500">Br:₺{item.price.toFixed(2)}</span>
+                          <span className="text-gray-500">Br:€{item.price.toFixed(2)}</span>
                         </div>
                         
                         {/* Sağ: Silme Butonu */}
@@ -555,15 +556,15 @@ export default function TablePOSPage() {
               {/* Detaylar */}
               <div className="flex justify-between items-center text-xs text-gray-600">
                 <span>Ürün: {orderItems.length}</span>
-                <span>Ara Toplam: ₺{subtotal.toFixed(2)}</span>
-                <span>KDV: ₺{tax.toFixed(2)}</span>
+                <span>Ara Toplam: €{subtotal.toFixed(2)}</span>
+                <span>KDV: €{tax.toFixed(2)}</span>
               </div>
               
               {/* Ana Toplam - Material Card */}
-              <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4 rounded-2xl shadow-lg">
+              <div className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-4 rounded-2xl shadow-lg">
                 <div className="flex justify-between items-center">
                   <span className="text-base font-semibold">💰 TOPLAM</span>
-                  <span className="text-2xl font-bold">₺{total.toFixed(2)}</span>
+                  <span className="text-2xl font-bold">€{total.toFixed(2)}</span>
                 </div>
               </div>
                   </div>
@@ -571,8 +572,8 @@ export default function TablePOSPage() {
               </div>
 
         {/* 4 - Orta Panel - Kategoriler */}
-        <div className="w-1/4 bg-white rounded-2xl shadow-lg flex flex-col overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-3 font-semibold text-sm flex items-center gap-2">
+        <div className="w-1/4 bg-white rounded-2xl shadow-xl flex flex-col overflow-hidden border border-gray-100">
+          <div className="bg-gradient-to-r from-violet-500 to-purple-600 text-white px-4 py-3 font-semibold text-sm flex items-center gap-2">
             <span className="text-xl">📁</span>
             <span>KATEGORİLER</span>
           </div>
@@ -592,7 +593,7 @@ export default function TablePOSPage() {
                   onClick={() => setSelectedCategory(category.id)}
                     className={`p-3 text-sm font-semibold rounded-2xl transition-all ${
                     selectedCategory === category.id
-                        ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg'
+                        ? 'bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg'
                         : 'bg-gray-50 text-gray-700 hover:bg-gray-100 shadow-sm'
                   }`}
                 >
@@ -610,7 +611,7 @@ export default function TablePOSPage() {
         </div>
 
         {/* 5 - Sağ Panel - Ürünler */}
-        <div className="w-5/12 bg-white rounded-2xl shadow-lg p-3 flex flex-col overflow-hidden">
+        <div className="w-5/12 bg-white rounded-2xl shadow-xl p-3 flex flex-col overflow-hidden border border-gray-100">
           {/* Arama Çubuğu - Material Design */}
           <div className="mb-3 flex-shrink-0">
             <input
@@ -627,7 +628,7 @@ export default function TablePOSPage() {
               <button
                 key={product.id}
                 onClick={() => handleProductClick(product)}
-                className="bg-gradient-to-br from-white to-gray-50 rounded-2xl hover:shadow-xl hover:scale-105 transition-all p-3 flex flex-col h-32 group relative overflow-hidden shadow-md"
+                className="bg-gradient-to-br from-white to-slate-50 rounded-2xl hover:shadow-xl hover:scale-105 transition-all p-3 flex flex-col h-32 group relative overflow-hidden shadow-md border border-gray-100"
               >
                 {/* En Çok Satan Badge - Material Chip */}
                 {(product.id === '1' || product.id === '2' || product.id === '3') && (
@@ -655,13 +656,13 @@ export default function TablePOSPage() {
                 </div>
                 
                 <div className="flex items-center justify-between mt-auto pt-2 border-t">
-                  <div className="text-base font-bold text-orange-600">
-                    ₺{product.price.toFixed(2)}
+                  <div className="text-base font-bold text-emerald-600">
+                    €{product.price.toFixed(2)}
                   </div>
-                  <div className="bg-orange-500 text-white rounded-full w-7 h-7 flex items-center justify-center group-hover:bg-orange-600 transition-colors">
+                  <div className="bg-emerald-500 text-white rounded-full w-7 h-7 flex items-center justify-center group-hover:bg-emerald-600 transition-colors">
                     <FiPlus className="w-4 h-4" />
                   </div>
-            </div>
+                </div>
               </button>
             ))}
             </div>
@@ -671,7 +672,7 @@ export default function TablePOSPage() {
       {/* 6 - Material Status Bar */}
       <div className="bg-white border-t border-gray-200 px-4 py-2 text-xs shadow-inner">
         <div className="text-gray-600">
-          {numberInput ? numberInput : (selectedProduct ? `✓ ${selectedProduct.name} - ₺${selectedProduct.price.toFixed(2)} sepete eklendi` : 'Ürün seçin...')}
+          {numberInput ? numberInput : (selectedProduct ? `✓ ${selectedProduct.name} - €${selectedProduct.price.toFixed(2)} sepete eklendi` : 'Ürün seçin...')}
         </div>
       </div>
 
@@ -679,14 +680,14 @@ export default function TablePOSPage() {
       <div className="fixed bottom-6 right-6 flex gap-3 z-40">
         <button
           onClick={() => setShowPOSModal(true)}
-          className="bg-blue-600 text-white px-6 py-4 rounded-full font-semibold text-base shadow-2xl hover:bg-blue-700 hover:scale-110 transition-all flex items-center gap-2"
+          className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-4 rounded-full font-semibold text-base shadow-2xl hover:from-indigo-700 hover:to-purple-700 hover:scale-110 transition-all flex items-center gap-2"
         >
           <span>📱</span>
           MENÜ DETAY
         </button>
         <button
           onClick={handleExit}
-          className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-4 rounded-full font-semibold text-base shadow-2xl hover:from-orange-600 hover:to-orange-700 hover:scale-110 transition-all flex items-center gap-2"
+          className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-6 py-4 rounded-full font-semibold text-base shadow-2xl hover:from-emerald-600 hover:to-teal-700 hover:scale-110 transition-all flex items-center gap-2"
         >
           <span>✓</span>
           ÇIKIŞ
@@ -824,7 +825,7 @@ export default function TablePOSPage() {
             </div>
             
             <div className="text-lg font-bold mb-4">
-              Toplam: ₺{(selectedProduct.price * quantity).toFixed(2)}
+              Toplam: €{(selectedProduct.price * quantity).toFixed(2)}
         </div>
 
             <div className="flex space-x-2">
@@ -870,7 +871,7 @@ export default function TablePOSPage() {
                         <span className="font-medium">{item.name}</span>
                         <span className="text-gray-600 ml-2">({item.quantity}x)</span>
                       </div>
-                      <div className="font-bold">₺{item.total.toFixed(2)}</div>
+                      <div className="font-bold">€{item.total.toFixed(2)}</div>
                     </div>
                   </div>
                 ))}
@@ -882,7 +883,7 @@ export default function TablePOSPage() {
               <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded">
                 <div className="flex justify-between items-center">
                   <span className="font-semibold">Seçili Ürünler Toplamı:</span>
-                  <span className="font-bold text-green-600">₺{getSelectedItemsTotal().toFixed(2)}</span>
+                  <span className="font-bold text-green-600">€{getSelectedItemsTotal().toFixed(2)}</span>
             </div>
           </div>
         )}

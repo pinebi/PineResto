@@ -327,7 +327,7 @@ export default function OrderDetailPage({ orderId, onClose }: OrderDetailPagePro
                     <div className="text-right">
                       <p className="font-medium text-gray-900">Adet: {item.quantity}</p>
                       <p className="text-lg font-bold text-gray-900">
-                        ₺{(item.total_price || (item.unit_price * item.quantity)).toFixed(2)}
+                        €{(item.total_price || (item.unit_price * item.quantity)).toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -340,7 +340,7 @@ export default function OrderDetailPage({ orderId, onClose }: OrderDetailPagePro
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="flex justify-between items-center">
               <span className="text-lg font-semibold text-gray-900">Toplam Tutar:</span>
-              <span className="text-2xl font-bold text-gray-900">₺{(order.total_amount || order.final_amount || order.total || 0).toFixed(2)}</span>
+              <span className="text-2xl font-bold text-gray-900">€{(order.total_amount || order.final_amount || order.total || 0).toFixed(2)}</span>
             </div>
           </div>
         </div>

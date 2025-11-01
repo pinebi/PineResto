@@ -128,7 +128,7 @@ export default function TableOrderPage() {
       
       if (response.ok) {
         const result = await response.json();
-        alert(`✅ Siparişiniz alındı!\n\nMasa ${tableId}\nSipariş No: ${result.orderNumber || 'N/A'}\nToplam: ₺${getTotalPrice().toFixed(2)}\n\nSiparişiniz hazırlanıyor!`);
+        alert(`✅ Siparişiniz alındı!\n\nMasa ${tableId}\nSipariş No: ${result.orderNumber || 'N/A'}\nToplam: €${getTotalPrice().toFixed(2)}\n\nSiparişiniz hazırlanıyor!`);
         
         // Sepeti temizle
         await fetch(`/api/cart?sessionId=${localStorage.getItem(`table-${tableId}-session-id`)}&orderType=online`, {
@@ -167,7 +167,7 @@ export default function TableOrderPage() {
                 <FiShoppingCart className="w-5 h-5" />
                 <span>{getTotalItems()} Ürün</span>
                 <span className="bg-orange-600 text-white px-3 py-1 rounded-lg ml-2">
-                  ₺{getTotalPrice().toFixed(2)}
+                  €{getTotalPrice().toFixed(2)}
                 </span>
               </button>
             )}
@@ -235,7 +235,7 @@ export default function TableOrderPage() {
                 <h3 className="font-bold text-gray-900 mb-2 text-lg">{product.name}</h3>
                 <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-orange-600">₺{product.price}</span>
+                  <span className="text-2xl font-bold text-orange-600">€{product.price}</span>
                   <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-medium">
                     Ekle
                   </span>
@@ -263,7 +263,7 @@ export default function TableOrderPage() {
               <div className="flex items-center gap-4">
                 <div className="text-right">
                   <div className="text-sm text-gray-600">Toplam</div>
-                  <div className="text-2xl font-bold text-orange-600">₺{getTotalPrice().toFixed(2)}</div>
+                  <div className="text-2xl font-bold text-orange-600">€{getTotalPrice().toFixed(2)}</div>
                 </div>
                 <button
                   onClick={handleCheckout}
@@ -320,7 +320,7 @@ export default function TableOrderPage() {
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-gray-600 line-clamp-2">{selectedProduct.description}</p>
-                  <p className="text-lg font-bold text-orange-600 mt-1">₺{selectedProduct.price.toFixed(2)}</p>
+                  <p className="text-lg font-bold text-orange-600 mt-1">€{selectedProduct.price.toFixed(2)}</p>
                 </div>
               </div>
 
@@ -375,7 +375,7 @@ export default function TableOrderPage() {
                             <div className="flex items-center justify-between">
                               <span>{displayValue}</span>
                               <div className="flex items-center gap-1">
-                                {priceModifier > 0 && <span className="text-xs">+₺{priceModifier}</span>}
+                                {priceModifier > 0 && <span className="text-xs">+€{priceModifier}</span>}
                                 {selectedOptions[option.name] === value && (
                                   <FiCheck className="w-4 h-4" />
                                 )}
@@ -410,7 +410,7 @@ export default function TableOrderPage() {
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm font-semibold text-gray-700">Toplam:</span>
                 <span className="text-2xl font-bold text-orange-600">
-                  ₺{calculateTotalPrice().toFixed(2)}
+                  €{calculateTotalPrice().toFixed(2)}
                 </span>
               </div>
               

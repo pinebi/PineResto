@@ -45,12 +45,12 @@ export default function Home() {
           </Link>
 
           <Link 
-            href="/mobile"
+            href="/mobile/waiter"
             className="group bg-white rounded-2xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105"
           >
-            <div className="text-6xl mb-4">📱</div>
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">{t('nav.mobile')}</h2>
-            <p className="text-gray-600">Garson</p>
+            <div className="text-6xl mb-4">👨‍🍳</div>
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">Garson</h2>
+            <p className="text-gray-600">Masa Yönetimi</p>
           </Link>
 
           <Link 

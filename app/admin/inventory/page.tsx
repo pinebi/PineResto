@@ -184,7 +184,7 @@ export default function InventoryPage() {
           <div className="flex items-center justify-between">
             <div>
               <div className="text-sm opacity-90">Toplam Değer</div>
-              <div className="text-3xl font-bold mt-1">₺{totalValue.toLocaleString()}</div>
+              <div className="text-3xl font-bold mt-1">€{totalValue.toLocaleString()}</div>
             </div>
             <FiDollarSign className="w-12 h-12 opacity-50" />
           </div>
@@ -286,9 +286,9 @@ export default function InventoryPage() {
                       <td className="px-4 py-3 text-sm text-gray-600">
                         {item.minStock} / {item.maxStock}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-900">₺{item.unitPrice}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900">€{item.unitPrice}</td>
                       <td className="px-4 py-3 text-sm font-semibold text-green-600">
-                        ₺{item.totalValue.toLocaleString()}
+                        €{item.totalValue.toLocaleString()}
                       </td>
                       <td className="px-4 py-3">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(item.status)}`}>
@@ -348,15 +348,15 @@ export default function InventoryPage() {
                       <div className="space-y-3">
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Maliyet:</span>
-                          <span className="font-semibold text-red-600">₺{recipe.cost}</span>
+                          <span className="font-semibold text-red-600">€{recipe.cost}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Satış Fiyatı:</span>
-                          <span className="font-semibold text-green-600">₺{recipe.sellingPrice}</span>
+                          <span className="font-semibold text-green-600">€{recipe.sellingPrice}</span>
                         </div>
                         <div className="flex justify-between pt-2 border-t">
                           <span className="text-sm font-medium text-gray-900">Net Kar:</span>
-                          <span className="font-bold text-blue-600">₺{recipe.sellingPrice - recipe.cost}</span>
+                          <span className="font-bold text-blue-600">€{recipe.sellingPrice - recipe.cost}</span>
                         </div>
                       </div>
                     </div>
@@ -393,7 +393,7 @@ export default function InventoryPage() {
                   <h3 className="font-bold text-gray-900 mb-2">{supplier}</h3>
                   <div className="space-y-1 text-sm text-gray-600">
                     <div>Ürün Sayısı: {Math.floor(Math.random() * 10) + 1}</div>
-                    <div>Toplam: ₺{(Math.floor(Math.random() * 5000) + 1000).toLocaleString()}</div>
+                    <div>Toplam: €{(Math.floor(Math.random() * 5000) + 1000).toLocaleString()}</div>
                     <div>Son Sipariş: {new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toLocaleDateString('tr-TR')}</div>
                   </div>
                   <button className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition-colors">

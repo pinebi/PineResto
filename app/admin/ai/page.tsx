@@ -72,7 +72,7 @@ export default function AIPage() {
           <div className="flex items-center justify-between">
             <div>
               <div className="text-sm opacity-90">Bugün Tahmini</div>
-              <div className="text-3xl font-bold mt-1">₺{aiPredictions.predictedSales.toLocaleString()}</div>
+              <div className="text-3xl font-bold mt-1">€{aiPredictions.predictedSales.toLocaleString()}</div>
             </div>
             <FiTrendingUp className="w-12 h-12 opacity-50" />
           </div>
@@ -234,6 +234,11 @@ export default function AIPage() {
     </div>
   );
 }
+
+
+
+
+
 
 
 

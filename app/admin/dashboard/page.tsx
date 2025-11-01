@@ -225,7 +225,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Bugünkü Gelir</p>
-              <p className="text-3xl font-bold text-gray-900">₺{stats.todayRevenue.toLocaleString()}</p>
+              <p className="text-3xl font-bold text-gray-900">€{stats.todayRevenue.toLocaleString()}</p>
               <div className="flex items-center mt-2">
                 <FiTrendingUp className="w-4 h-4 text-green-500 mr-1" />
                 <span className="text-sm text-green-600">+12% dün</span>
@@ -381,7 +381,7 @@ export default function DashboardPage() {
                     <span className="ml-1 capitalize">{order.orderType}</span>
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                    ₺{order.total.toFixed(2)}
+                    €{order.total.toFixed(2)}
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(order.status)}`}>
@@ -474,7 +474,7 @@ export default function DashboardPage() {
             </div>
             <div className="flex justify-between items-center py-2">
               <span className="text-sm text-gray-600">Toplam Gelir</span>
-              <span className="text-sm font-medium text-green-600">₺{stats.todayRevenue.toLocaleString()}</span>
+              <span className="text-sm font-medium text-green-600">€{stats.todayRevenue.toLocaleString()}</span>
             </div>
           </div>
         </div>

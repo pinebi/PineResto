@@ -219,25 +219,41 @@ export default function OnlinePage() {
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`p-4 rounded-xl shadow-md hover:shadow-lg transition-all text-center ${
+                className={`relative rounded-xl shadow-md hover:shadow-lg transition-all overflow-hidden ${
                   selectedCategory === category.id
-                    ? 'bg-primary-500 text-white' 
-                    : 'bg-white text-gray-900'
+                    ? 'ring-4 ring-primary-500'
+                    : ''
                 }`}
               >
-                <div className="text-3xl mb-2">
-                  {category.imageUrl && category.imageUrl.startsWith('http') ? (
+                {category.imageUrl && category.imageUrl.startsWith('http') ? (
+                  <>
                     <img 
                       src={category.imageUrl} 
                       alt={category.name}
-                      className="w-8 h-8 mx-auto object-cover rounded"
+                      className="w-full h-24 object-cover transition-transform duration-300 hover:scale-110"
                       loading="lazy"
                     />
-                  ) : (
-                    category.imageUrl || '🍽️'
-                  )}
-                </div>
-                <div className="text-sm font-semibold">{category.name}</div>
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
+                    {/* Category Name Overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 p-2">
+                      <div className={`text-xs font-bold text-white drop-shadow-lg text-center ${
+                        selectedCategory === category.id ? 'text-yellow-300' : ''
+                      }`}>
+                        {category.name}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className={`w-full h-24 flex flex-col items-center justify-center ${
+                    selectedCategory === category.id
+                      ? 'bg-primary-500 text-white'
+                      : 'bg-white text-gray-900'
+                  }`}>
+                    <div className="text-3xl mb-1">{category.imageUrl || '🍽️'}</div>
+                    <div className="text-xs font-semibold">{category.name}</div>
+                  </div>
+                )}
               </button>
             ))}
           </div>
@@ -320,7 +336,7 @@ export default function OnlinePage() {
                   </p>
                   <div className="flex justify-between items-center">
                     <span className="text-lg font-bold text-primary-600">
-                      ₺{product.price.toFixed(2)}
+                      €{product.price.toFixed(2)}
                     </span>
                     <span className="bg-primary-500 text-white px-2 py-1 rounded-md text-xs font-semibold">
                       Ekle
@@ -386,7 +402,7 @@ export default function OnlinePage() {
               </p>
               
                   <div className="text-lg font-bold text-primary-600 mb-1">
-                ₺{selectedProduct.price.toFixed(2)}
+                €{selectedProduct.price.toFixed(2)}
                   </div>
 
                   {/* Product Tags */}
@@ -428,7 +444,7 @@ export default function OnlinePage() {
                                 {typeof value === 'string' ? value : value.name}
                                 {typeof value === 'object' && value.priceModifier !== 0 && (
                                   <span className={`ml-1 ${value.priceModifier > 0 ? 'text-green-500' : 'text-red-500'}`}>
-                                    ({value.priceModifier > 0 ? '+' : ''}{value.priceModifier}₺)
+                                    ({value.priceModifier > 0 ? '+' : ''}{value.priceModifier}€)
                                   </span>
                                 )}
                               </span>
@@ -489,7 +505,7 @@ export default function OnlinePage() {
                 <div className="flex justify-between items-center mb-3">
                   <span className="text-lg font-bold text-gray-700">Toplam:</span>
                   <span className="text-2xl font-bold text-primary-600">
-                    ₺{calculateTotalPrice().toFixed(2)}
+                    €{calculateTotalPrice().toFixed(2)}
                   </span>
                 </div>
               

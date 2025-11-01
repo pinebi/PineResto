@@ -395,7 +395,7 @@ export default function AddProductPage({ onSuccess }: AddProductPageProps) {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Alış Fiyatı (₺)
+                    Alış Fiyatı (€)
                   </label>
                   <input
                     type="number"
@@ -408,7 +408,7 @@ export default function AddProductPage({ onSuccess }: AddProductPageProps) {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Satış Fiyatı (₺) *
+                    Satış Fiyatı (€) *
                   </label>
                   <input
                     type="number"
@@ -780,7 +780,7 @@ export default function AddProductPage({ onSuccess }: AddProductPageProps) {
                                   <span className={`ml-1 font-medium ${
                                     value.priceModifier > 0 ? 'text-green-600' : 'text-red-600'
                                   }`}>
-                                    ({value.priceModifier > 0 ? '+' : ''}₺{value.priceModifier.toFixed(2)})
+                                    ({value.priceModifier > 0 ? '+' : ''}€{value.priceModifier.toFixed(2)})
                                   </span>
                                 )}
                               </span>

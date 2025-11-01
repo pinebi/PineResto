@@ -297,7 +297,7 @@ export default function ProductDetailPage({ productId, onClose }: ProductDetailP
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Alış Fiyatı (₺)
+                        Alış Fiyatı (€)
                       </label>
                       <input
                         type="number"
@@ -309,7 +309,7 @@ export default function ProductDetailPage({ productId, onClose }: ProductDetailP
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Satış Fiyatı (₺) *
+                        Satış Fiyatı (€) *
                       </label>
                       <input
                         type="number"
@@ -680,11 +680,11 @@ export default function ProductDetailPage({ productId, onClose }: ProductDetailP
                     <div className="grid grid-cols-2 gap-4 mb-4">
                       <div>
                         <p className="text-sm text-gray-500">Satış Fiyatı</p>
-                        <p className="text-2xl font-bold text-green-600">₺{product.price.toFixed(2)}</p>
+                        <p className="text-2xl font-bold text-green-600">€{product.price.toFixed(2)}</p>
                       </div>
                       <div>
                         <p className="text-sm text-gray-500">Alış Fiyatı</p>
-                        <p className="text-xl font-semibold text-gray-700">₺{(product.purchasePrice || 0).toFixed(2)}</p>
+                        <p className="text-xl font-semibold text-gray-700">€{(product.purchasePrice || 0).toFixed(2)}</p>
                       </div>
                     </div>
 
@@ -814,7 +814,7 @@ export default function ProductDetailPage({ productId, onClose }: ProductDetailP
                     <div className="flex justify-between">
                       <span className="text-gray-600">Kar Marjı</span>
                       <span className="font-medium text-green-600">
-                        ₺{(product.price - (product.purchasePrice || 0)).toFixed(2)}
+                        €{(product.price - (product.purchasePrice || 0)).toFixed(2)}
                       </span>
                     </div>
                     <div className="flex justify-between">
@@ -907,7 +907,7 @@ export default function ProductDetailPage({ productId, onClose }: ProductDetailP
                                       <span className={`ml-1 font-medium ${
                                         value.priceModifier > 0 ? 'text-green-600' : 'text-red-600'
                                       }`}>
-                                        ({value.priceModifier > 0 ? '+' : ''}₺{value.priceModifier.toFixed(2)})
+                                        ({value.priceModifier > 0 ? '+' : ''}€{value.priceModifier.toFixed(2)})
                                       </span>
                                     )}
                                   </span>
